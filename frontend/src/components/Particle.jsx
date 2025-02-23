@@ -15,7 +15,7 @@ export default function Particle() {
   }, []);
 
   const particlesLoaded = (container) => {
-    // Optional: Add logic here if needed
+    
   };
 
   return (
@@ -25,8 +25,8 @@ export default function Particle() {
           id="tsparticles"
           particlesLoaded={particlesLoaded}
           style={{
-            zIndex: 1, // Behind the card (card will have higher z-index)
-            position: 'absolute', // Full-screen background
+            zIndex: 1, 
+            position: 'absolute', 
             top: 0,
             left: 0,
             width: '100%',
@@ -58,10 +58,10 @@ export default function Particle() {
             },
             particles: {
               color: {
-                value: "#bae6fd", // Light blue particles
+                value: "#bae6fd", 
               },
               links: {
-                color: "#e0f2fe", // Light cyan links
+                color: "#e0f2fe", 
                 distance: 150,
                 enable: true,
                 opacity: 0.5,

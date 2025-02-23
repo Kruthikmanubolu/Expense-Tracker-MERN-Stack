@@ -4,7 +4,7 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #a1c4fd, #c2e9fb, #fbc2eb); /* Lighter pastel gradient */
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb, #fbc2eb);
   background-size: 200% 200%;
   animation: gradientShift 15s ease infinite;
   min-height: 100vh;
@@ -28,6 +28,6 @@ body {
 }
 
 .form-control:focus {
-  border-color: #a1c4fd; /* Match lightest gradient color */
+  border-color: #a1c4fd;
   box-shadow: 0 0 5px rgba(161, 196, 253, 0.5);
 }
