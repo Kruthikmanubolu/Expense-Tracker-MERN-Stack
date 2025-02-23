@@ -6,7 +6,11 @@ const auth = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+<<<<<<< HEAD
     req.user = { id: decoded.id, username: decoded.username }; // Add username to req.user
+=======
+    req.user = { id: decoded.id, username: decoded.username }; 
+>>>>>>> master
     next();
   } catch (error) {
     res.status(401).json({ message: 'Token is not valid' });

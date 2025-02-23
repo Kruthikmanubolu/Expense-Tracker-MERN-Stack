@@ -1,6 +1,10 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
 const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+=======
+const API = axios.create({ baseURL: 'http://localhost:5000/api' }); 
+>>>>>>> master
 
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');
@@ -13,4 +17,10 @@ export const login = (data) => API.post('/auth/login', data);
 export const getExpenses = () => API.get('/expenses');
 export const addExpense = (data) => API.post('/expenses', data);
 export const updateExpense = (id, data) => API.put(`/expenses/${id}`, data);
+<<<<<<< HEAD
 export const deleteExpense = (id) => API.delete(`/expenses/${id}`);
+=======
+export const deleteExpense = (id) => API.delete(`/expenses/${id}`);
+export const getIncomes = () => API.get('/incomes');
+export const addIncome = (data) => API.post('/incomes', data);
+>>>>>>> master
