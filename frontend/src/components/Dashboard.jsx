@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { getExpenses, addExpense, updateExpense, deleteExpense } from '../api/api';
+import { getExpenses, addExpense, updateExpense, deleteExpense, getIncomes, addIncome } from '../api/api';
 import ExpenseForm from './ExpenseForm';
-import { Pie, Bar } from 'react-chartjs-2';
+import IncomeForm from './IncomeForm';
+import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels'; 
 
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
+  const [incomes, setIncomes] = useState([]);
   const [username, setUsername] = useState(localStorage.getItem('username') || '');
   const [editingExpense, setEditingExpense] = useState(null);
   const [editForm, setEditForm] = useState({ description: '', amount: '', category: '' });
 
   useEffect(() => {
     fetchExpenses();
+    fetchIncomes();
   }, []);
 
   const fetchExpenses = async () => {
@@ -26,9 +30,23 @@ const Dashboard = () => {
     }
   };
 
-  const handleAdd = async (expense) => {
+  const fetchIncomes = async () => {
+    try {
+      const { data } = await getIncomes();
+      setIncomes(data);
+    } catch (error) {
+      console.error('Error fetching incomes:', error);
+    }
+  };
+
+  const handleAddExpense = async (expense) => {
     await addExpense(expense);
     fetchExpenses();
+  };
+
+  const handleAddIncome = async (income) => {
+    await addIncome(income);
+    fetchIncomes();
   };
 
   const handleEditClick = (expense) => {
@@ -79,34 +97,34 @@ const Dashboard = () => {
   };
 
   
-  const categoryTotals = expenses.reduce((acc, exp) => {
+  const expenseTotals = expenses.reduce((acc, exp) => {
     acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
     return acc;
   }, {});
-  const totalAmount = Object.values(categoryTotals).reduce((sum, val) => sum + val, 0);
+  const incomeTotals = incomes.reduce((acc, inc) => {
+    acc[inc.category] = (acc[inc.category] || 0) + inc.amount;
+    return acc;
+  }, {});
+
+  const totalIncome = Object.values(incomeTotals).reduce((sum, val) => sum + val, 0);
+  const totalExpenses = Object.values(expenseTotals).reduce((sum, val) => sum + val, 0);
+  const remainingIncome = totalIncome - totalExpenses;
 
   const chartData = {
-    labels: Object.keys(categoryTotals),
+    labels: [...Object.keys(expenseTotals), 'Remaining Income'],
     datasets: [{
-      label: 'Expenses by Category',
-      data: Object.values(categoryTotals),
+      label: 'Financial Overview',
+      data: [...Object.values(expenseTotals), remainingIncome > 0 ? remainingIncome : 0],
       backgroundColor: [
-        'rgba(255, 99, 132, 0.7)',  
-        'rgba(54, 162, 235, 0.7)',  
-        'rgba(255, 206, 86, 0.7)',  
-        'rgba(75, 192, 192, 0.7)',  
-        'rgba(153, 102, 255, 0.7)', 
-        'rgba(255, 159, 64, 0.7)',  
+        ...Object.keys(expenseTotals).map(() => 'rgba(255, 0, 0, 1)'), 
+        'rgba(0, 255, 0, 1)', 
       ],
       borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
+        ...Object.keys(expenseTotals).map(() => 'rgba(0, 0, 0, 1)'),
+        'rgba(0, 0, 0, 1)',
       ],
       borderWidth: 1,
+      offset: Object.keys(expenseTotals).map(() => 10).concat(0), 
     }],
   };
 
@@ -122,7 +140,7 @@ const Dashboard = () => {
           usePointStyle: true,
           generateLabels: (chart) => {
             const data = chart.data;
-            const total = data.datasets[0].data.reduce((sum, val) => sum + val, 0);
+            const total = totalIncome;
             return data.labels.map((label, i) => ({
               text: `${label}: ${((data.datasets[0].data[i] / total) * 100).toFixed(1)}%\nTotal: $${data.datasets[0].data[i]}`,
               fillStyle: data.datasets[0].backgroundColor[i],
@@ -138,10 +156,24 @@ const Dashboard = () => {
           label: function (context) {
             const label = context.label || '';
             const value = context.raw || 0;
-            const percentage = totalAmount > 0 ? ((value / totalAmount) * 100).toFixed(1) : 0;
+            const percentage = totalIncome > 0 ? ((value / totalIncome) * 100).toFixed(1) : 0;
             return `${label}: $${value} (${percentage}%)`;
           },
         },
+      },
+      datalabels: {
+        color: '#fff', 
+        font: {
+          size: 14,
+          weight: 'bold',
+        },
+        formatter: (value, context) => {
+          const total = totalIncome;
+          const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+          return `${context.chart.data.labels[context.dataIndex]} ${percentage}%`;
+        },
+        anchor: 'center', 
+        align: 'center',
       },
     },
   };
@@ -156,7 +188,8 @@ const Dashboard = () => {
       </nav>
       <div className="container mt-4">
         <h2 className="mb-4">Hello, {username}!</h2>
-        <ExpenseForm onSubmit={handleAdd} />
+        <IncomeForm onSubmit={handleAddIncome} />
+        <ExpenseForm onSubmit={handleAddExpense} />
 
         {editingExpense && (
           <div className="card p-3 mb-4">
@@ -246,11 +279,11 @@ const Dashboard = () => {
           )}
         </div>
         <div className="mt-4">
-          <h3>Expense Chart</h3>
-          {expenses.length > 0 ? (
+          <h3>Financial Overview</h3>
+          {totalIncome > 0 ? (
             <Pie data={chartData} options={chartOptions} style={{ maxHeight: '400px' }} />
           ) : (
-            <p className="text-muted">No data to display in chart.</p>
+            <p className="text-muted">Add income to see the chart.</p>
           )}
         </div>
       </div>
