@@ -5,6 +5,7 @@ import IncomeForm from './IncomeForm';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels'; 
+import Particle from './Particle';
 
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
@@ -180,6 +181,7 @@ const Dashboard = () => {
 
   return (
     <div>
+      <Particle/>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
           <span className="navbar-brand">Expense Tracker</span>

@@ -1,21 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadFull } from "tsparticles";
+import { useCallback, useEffect, useState } from 'react';
+import Particles, { initParticlesEngine } from '@tsparticles/react';
+import { loadFull } from 'tsparticles';
+import React from 'react'; 
 
-export default function Particle() {
+export default React.memo(function Particle() {
   const [init, setInit] = useState(false);
 
   useEffect(() => {
-    console.log("init");
+    console.log('Particle initialized');
     initParticlesEngine(async (engine) => {
       await loadFull(engine);
     }).then(() => {
       setInit(true);
     });
-  }, []);
+  }, []); 
 
-  const particlesLoaded = (container) => {
-  };
+  const particlesLoaded = useCallback((container) => {
+    console.log('Particles loaded');
+  }, []); 
 
   return (
     <>
@@ -24,9 +26,8 @@ export default function Particle() {
           id="tsparticles"
           particlesLoaded={particlesLoaded}
           style={{
-
-            zIndex: 1, 
-            position: 'absolute', 
+            zIndex: 1,
+            position: 'absolute',
             top: 0,
             left: 0,
             width: '100%',
@@ -38,11 +39,11 @@ export default function Particle() {
               events: {
                 onClick: {
                   enable: true,
-                  mode: "push",
+                  mode: 'push',
                 },
                 onHover: {
                   enable: true,
-                  mode: "repulse",
+                  mode: 'repulse',
                 },
                 resize: true,
               },
@@ -58,21 +59,20 @@ export default function Particle() {
             },
             particles: {
               color: {
-                value: "#bae6fd", // Light blue particles
+                value: '#ff00ff', 
               },
               links: {
-                color: "#e0f2fe", // Light cyan links
-
+                color: '#00ff00', 
                 distance: 150,
                 enable: true,
                 opacity: 0.5,
                 width: 1,
               },
               move: {
-                direction: "none",
+                direction: 'none',
                 enable: true,
                 outModes: {
-                  default: "bounce",
+                  default: 'bounce',
                 },
                 random: false,
                 speed: 1.2,
@@ -89,7 +89,7 @@ export default function Particle() {
                 value: 0.5,
               },
               shape: {
-                type: "circle",
+                type: 'circle',
               },
               size: {
                 value: { min: 1, max: 5 },
@@ -101,4 +101,4 @@ export default function Particle() {
       )}
     </>
   );
-}
+});

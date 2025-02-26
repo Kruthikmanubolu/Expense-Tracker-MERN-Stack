@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../api/api';
+import Particle from './Particle';
+import { Spinner } from 'react-bootstrap';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -10,6 +12,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -40,26 +43,35 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     if (validateForm()) {
       try {
         const { data } = await signup({ username, email, password, confirmPassword });
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);
+        setLoading(false);
         navigate('/login');
       } catch (error) {
         alert('Signup failed: ' + (error.response?.data?.message || 'Unknown error'));
+        setLoading(false);
       }
     }
   };
 
   return (
     <div className="container d-flex justify-content-center align-items-center min-vh-100">
+      <Particle/>
       <div className="card p-4 shadow-lg" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="card-header bg-primary text-white text-center py-3">
           <h3 className="mb-0">Get Started</h3>
           <small>Sign up for Expense Tracker</small>
         </div>
         <div className="card-body">
+        {loading ? (
+            <div className="d-flex justify-content-center align-items-center">
+              <Spinner animation="border" variant="primary" /> 
+            </div>
+          ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="username" className="form-label fw-bold">Username</label>
@@ -141,6 +153,7 @@ const Signup = () => {
               Sign Up
             </button>
           </form>
+          )}
         </div>
         <div className="card-footer text-center text-muted py-2">
           <small>
