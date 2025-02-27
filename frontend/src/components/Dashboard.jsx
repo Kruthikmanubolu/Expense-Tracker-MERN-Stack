@@ -184,7 +184,7 @@ const Dashboard = () => {
       <Particle/>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <span className="navbar-brand">Expense Tracker</span>
+          <span className="navbar-brand">Spend Smart</span>
           <button className="btn btn-outline-light" onClick={handleLogout}>Logout</button>
         </div>
       </nav>

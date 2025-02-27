@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { signup } from '../api/api';
 import Particle from './Particle';
 import { Spinner } from 'react-bootstrap';
-
 const Signup = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -17,7 +16,6 @@ const Signup = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
     if (!username.trim()) {
@@ -28,12 +26,23 @@ const Signup = () => {
       newErrors.email = 'Email must be a valid @gmail.com address';
     }
 
-    if (!passwordRegex.test(password)) {
-      newErrors.password =
-        'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, and one special character (!@#$%^&*)';
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else {
+      if (password.length < 8) {
+        newErrors.password = 'Password must be at least 8 characters long';
+      } else if (!/[a-z]/.test(password)) {
+        newErrors.password = 'Password must include at least one lowercase letter';
+      } else if (!/[A-Z]/.test(password)) {
+        newErrors.password = 'Password must include at least one uppercase letter';
+      } else if (!/[!@#$%^&*]/.test(password)) {
+        newErrors.password = 'Password must include at least one special character (!@#$%^&*)';
+      }
     }
 
-    if (password !== confirmPassword) {
+    if (!confirmPassword) {
+      newErrors.confirmPassword = 'Confirm Password is required';
+    } else if (password !== confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
@@ -49,27 +58,32 @@ const Signup = () => {
         const { data } = await signup({ username, email, password, confirmPassword });
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);
-        setLoading(false);
         navigate('/login');
+        setLoading(false);
       } catch (error) {
         alert('Signup failed: ' + (error.response?.data?.message || 'Unknown error'));
-        setLoading(false);
+        setLoading(true);
+        if (error.response?.data?.message) {
+          setErrors({ backend: error.response.data.message });
+        }
       }
     }
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center min-vh-100">
-      <Particle/>
-      <div className="card p-4 shadow-lg" style={{ maxWidth: '400px', width: '100%' }}>
-        <div className="card-header bg-primary text-white text-center py-3">
-          <h3 className="mb-0">Get Started</h3>
-          <small>Sign up for Expense Tracker</small>
-        </div>
+    <div className="container d-flex justify-content-center align-items-center min-vh-100 position-relative">
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+        <Particle />
+      </div>
+      <div
+        className="card p-4 shadow-lg"
+        style={{ maxWidth: '400px', width: '100%', zIndex: 2, background: 'rgba(255, 255, 255, 0.95)', borderRadius: '15px' }}
+      >
         <div className="card-body">
-        {loading ? (
+          <h3 className="text-center mb-4">Sign up for SpendSmart</h3>
+          {loading ? (
             <div className="d-flex justify-content-center align-items-center">
-              <Spinner animation="border" variant="primary" /> 
+              <Spinner animation="border" variant="primary" />
             </div>
           ) : (
           <form onSubmit={handleSubmit}>
@@ -148,12 +162,12 @@ const Signup = () => {
                 </button>
               </div>
               {errors.confirmPassword && <div className="invalid-feedback">{errors.confirmPassword}</div>}
+              {errors.backend && <div className="alert alert-danger mt-2">{errors.backend}</div>}
             </div>
             <button type="submit" className="btn btn-primary btn-lg w-100 rounded-pill">
               Sign Up
             </button>
-          </form>
-          )}
+          </form>)}
         </div>
         <div className="card-footer text-center text-muted py-2">
           <small>

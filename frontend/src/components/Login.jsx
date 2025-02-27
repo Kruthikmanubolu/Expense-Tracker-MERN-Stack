@@ -2,47 +2,44 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/api';
 import Particle from './Particle';
-import { Spinner } from 'react-bootstrap'; 
+import { Spinner } from 'react-bootstrap';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); 
+    setLoading(true);
     try {
       const { data } = await login({ email, password });
       localStorage.setItem('token', data.token);
       localStorage.setItem('username', data.username);
-      setLoading(false); 
+      setLoading(false);
       navigate('/dashboard');
     } catch (error) {
-      setLoading(false); 
+      setLoading(false);
       alert('Login failed: ' + (error.response?.data?.message || 'Unknown error'));
     }
   };
 
   return (
-    <login>
     <div className="container d-flex justify-content-center align-items-center min-vh-100 position-relative">
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-        <Particle />
-      </div>      
-      <div className="card p-4 shadow-lg" style={{ maxWidth: '400px', width: '100%', zIndex: 2, background: 'rgba(255, 255, 255, 0.95)', borderRadius: '15px' }}>
-        <div className="card-header bg-primary text-white text-center py-3">
-          <h3 className="mb-0">Welcome Back</h3>
-          <small>Login to your Expense Tracker</small>
-        </div>
+      <Particle />
+      <div
+        className="card p-4 shadow-lg"
+        style={{ maxWidth: '400px', width: '100%', zIndex: 2, background: 'rgba(255, 255, 255, 0.95)', borderRadius: '15px' }}
+      >
         <div className="card-body">
           {loading ? (
             <div className="d-flex justify-content-center align-items-center">
-              <Spinner animation="border" variant="primary" /> 
+              <Spinner animation="border" variant="primary" />
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
+              <h3 className="text-center mb-4">Login to SpendSmart</h3> {/* Optional: Reference "SpendSmart" */}
               <div className="mb-3">
                 <label htmlFor="email" className="form-label fw-bold">Email</label>
                 <input
@@ -87,7 +84,6 @@ const Login = () => {
         </div>
       </div>
     </div>
-    </login>
   );
 };
 
