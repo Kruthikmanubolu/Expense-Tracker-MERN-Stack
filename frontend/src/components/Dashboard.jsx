@@ -6,16 +6,17 @@ import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels'; 
 import Particle from './Particle';
-
+import '../index.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
-  const [username, setUsername] = useState(localStorage.getItem('username') || '');
+  const [username] = useState(localStorage.getItem('username') || '');
   const [editingExpense, setEditingExpense] = useState(null);
   const [editForm, setEditForm] = useState({ description: '', amount: '', category: '' });
+  const [finance, setFinance] = useState(false);
 
   useEffect(() => {
     fetchExpenses();
@@ -30,6 +31,10 @@ const Dashboard = () => {
       console.error('Error fetching expenses:', error);
     }
   };
+
+  const toggleChart = () => {
+    setFinance(!finance)
+  }
 
   const fetchIncomes = async () => {
     try {
@@ -86,7 +91,6 @@ const Dashboard = () => {
   };
 
   const handleDelete = async (id) => {
-    console.log('Deleting expense with ID:', id);
     await deleteExpense(id);
     fetchExpenses();
   };
@@ -97,7 +101,6 @@ const Dashboard = () => {
     window.location.href = '/login';
   };
 
-  
   const expenseTotals = expenses.reduce((acc, exp) => {
     acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
     return acc;
@@ -110,6 +113,15 @@ const Dashboard = () => {
   const totalIncome = Object.values(incomeTotals).reduce((sum, val) => sum + val, 0);
   const totalExpenses = Object.values(expenseTotals).reduce((sum, val) => sum + val, 0);
   const remainingIncome = totalIncome - totalExpenses;
+  const redShades = [
+    'rgba(255, 0, 0, 0.9)',  // Deep Red
+    'rgba(220, 20, 60, 0.8)', // Crimson
+    'rgba(255, 69, 0, 0.7)',  // Red-Orange
+    'rgba(178, 34, 34, 0.7)', // Firebrick
+    'rgba(255, 99, 71, 0.7)', // Tomato
+    'rgba(205, 92, 92, 0.7)', // Indian Red
+    'rgba(240, 128, 128, 0.7)', // Light Coral
+  ];
 
   const chartData = {
     labels: [...Object.keys(expenseTotals), 'Remaining Income'],
@@ -117,14 +129,14 @@ const Dashboard = () => {
       label: 'Financial Overview',
       data: [...Object.values(expenseTotals), remainingIncome > 0 ? remainingIncome : 0],
       backgroundColor: [
-        ...Object.keys(expenseTotals).map(() => 'rgba(255, 0, 0, 1)'), 
-        'rgba(0, 255, 0, 1)', 
+        ...Object.keys(expenseTotals).map((_,i) => redShades[i%redShades.length]), 
+        'rgba(0, 255, 1, 0.7)', 
       ],
       borderColor: [
         ...Object.keys(expenseTotals).map(() => 'rgba(0, 0, 0, 1)'),
         'rgba(0, 0, 0, 1)',
       ],
-      borderWidth: 1,
+      borderWidth: 2,
       offset: Object.keys(expenseTotals).map(() => 10).concat(0), 
     }],
   };
@@ -136,6 +148,7 @@ const Dashboard = () => {
       legend: {
         position: 'right',
         labels: {
+          color: '#ffffff',
           font: { size: 14 },
           padding: 20,
           usePointStyle: true,
@@ -148,12 +161,14 @@ const Dashboard = () => {
               hidden: !chart.getDataVisibility(i),
               index: i,
               lineHeight: 1.5,
+              fontColor : '#ffffff'
             }));
           },
         },
       },
       tooltip: {
         callbacks: {
+          color: '#fff',
           label: function (context) {
             const label = context.label || '';
             const value = context.raw || 0;
@@ -180,20 +195,25 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
-      <Particle/>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container">
-          <span className="navbar-brand">Spend Smart</span>
-          <button className="btn btn-outline-light" onClick={handleLogout}>Logout</button>
-        </div>
-      </nav>
-      <div className="container mt-4">
-        <h2 className="mb-4">Hello, {username}!</h2>
-        <IncomeForm onSubmit={handleAddIncome} />
-        <ExpenseForm onSubmit={handleAddExpense} />
+    <div className="page-container dashboard-container">
+      <div className="particle-bg">
+        <Particle />
+      </div>
+      <div className="overlay" />
+      <div className="glass-card dashboard-glass" style={{ maxWidth: 'none', width: '100%', margin: '0' }}>
+        <div className="container mt-4">
+          <div className="dashboard-header">
+            <h1 className="form-title dashboard-brand">Spend Smart</h1>
+            <button className="fancy-button logout-button" onClick={handleLogout}>Logout</button>
+          </div>
+          <h2 className="form-title mb-4">Hello, <span className="highlight-text">{username}</span>!</h2>
+          
+          <div className="mb-4">
+            <IncomeForm onSubmit={handleAddIncome} />
+            <ExpenseForm onSubmit={handleAddExpense} />
+          </div>
 
-        {editingExpense && (
+          {editingExpense && (
           <div className="card p-3 mb-4">
             <h3 className="card-title">Edit Expense</h3>
             <form onSubmit={handleEditSubmit}>
@@ -240,8 +260,8 @@ const Dashboard = () => {
           </div>
         )}
 
-        <div className="mt-4">
-          <h3>Expense List</h3>
+<div className="mt-4">
+          <h3 className='form-title'>Expense List</h3>
           {expenses.length === 0 ? (
             <p className="text-muted">No expenses yet.</p>
           ) : (
@@ -280,13 +300,23 @@ const Dashboard = () => {
             </table>
           )}
         </div>
-        <div className="mt-4">
-          <h3>Financial Overview</h3>
-          {totalIncome > 0 ? (
-            <Pie data={chartData} options={chartOptions} style={{ maxHeight: '400px' }} />
-          ) : (
-            <p className="text-muted">Add income to see the chart.</p>
-          )}
+
+          <div className="mt-4">
+            <h3 className="form-title">Financial Overview</h3>
+            <button 
+    className="btn btn-primary mb-3" 
+    onClick={toggleChart}
+  >
+    {finance ? 'Hide Pie Chart' : 'Show Pie Chart'}
+  </button>
+            {finance && totalIncome > 0 ? (
+              <div className="glass-card-dash">
+                <Pie data={chartData} options={chartOptions} style={{ maxHeight: '400px' }} />
+              </div>
+            ) : (
+              <p className="footer-text"></p>
+            )}
+          </div>
         </div>
       </div>
     </div>

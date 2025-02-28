@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../api/api';
 import Particle from './Particle';
 import { Spinner } from 'react-bootstrap';
+import '../index.css'; // Adjust path as needed
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -26,25 +28,27 @@ const Login = () => {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center min-vh-100 position-relative">
-      <Particle />
-      <div
-        className="card p-4 shadow-lg"
-        style={{ maxWidth: '400px', width: '100%', zIndex: 2, background: 'rgba(255, 255, 255, 0.95)', borderRadius: '15px' }}
-      >
-        <div className="card-body">
-          {loading ? (
-            <div className="d-flex justify-content-center align-items-center">
-              <Spinner animation="border" variant="primary" />
-            </div>
-          ) : (
+    <div className="page-container">
+      <div className="particle-bg">
+        <Particle />
+      </div>
+      <div className="overlay" />
+      <div className="glass-card">
+        {loading ? (
+          <div className="spinner-container">
+            <Spinner animation="border" variant="light" />
+          </div>
+        ) : (
+          <>
+            <h3 className="form-title">
+              Login to <span className="highlight-text">SpendSmart</span>
+            </h3>
             <form onSubmit={handleSubmit}>
-              <h3 className="text-center mb-4">Login to SpendSmart</h3> {/* Optional: Reference "SpendSmart" */}
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label fw-bold">Email</label>
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">Email</label>
                 <input
                   type="email"
-                  className="form-control form-control-lg"
+                  className="fancy-input"
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -52,36 +56,45 @@ const Login = () => {
                   required
                   aria-describedby="emailHelp"
                 />
-                <div id="emailHelp" className="form-text text-muted">
-                  We'll never share your email.
+                <div id="emailHelp" className="footer-text">
+                  We’ll never share your email.
                 </div>
               </div>
-              <div className="mb-4">
-                <label htmlFor="password" className="form-label fw-bold">Password</label>
-                <input
-                  type="password"
-                  className="form-control form-control-lg"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                />
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">Password</label>
+                <div className="input-wrapper">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="fancy-input"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <i className={showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'}></i>
+                  </button>
+                </div>
               </div>
-              <button type="submit" className="btn btn-primary btn-lg w-100 rounded-pill">
+              <button type="submit" className="fancy-button">
                 Login
               </button>
             </form>
-          )}
-        </div>
-        <div className="card-footer text-center text-muted py-2">
-          <small>
-            Don’t have an account?{' '}
-            <a href="/signup" className="text-primary text-decoration-none">
-              Sign up here
-            </a>
-          </small>
-        </div>
+            <div className="footer-text">
+              <small>
+                Don’t have an account?{' '}
+                <a href="/signup" className="highlight-text">
+                  Sign up here
+                </a>
+              </small>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
