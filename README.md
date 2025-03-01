@@ -1,10 +1,8 @@
 # SpendSmart - Expense Tracker
 
-![SpendSmart Logo](URL_to_logo_image)  <!-- Replace with actual logo URL or remove if not available -->
-
 ## Overview
 
-SpendSmart is a modern, user-friendly expense tracking application built with the MERN stack (MongoDB, Express.js, React, Node.js). It empowers users to manage their expenses and incomes efficiently, featuring user authentication with OTP verification, expense/income tracking, and a 3D financial overview chart. The app boasts a sleek UI with particle animations, a creative homepage, and secure authentication using JWT and OTP.
+SpendSmart is a modern, user-friendly expense tracking application built with the MERN stack (MongoDB, Express.js, React, Node.js). It empowers users to manage their expenses and incomes efficiently, expense/income tracking, and a 3D financial overview chart. The app boasts a sleek UI with particle animations, a creative homepage, and secure authentication using JWT.
 
 ## Key Features
 
@@ -30,6 +28,6 @@ Before you begin, ensure you have the following installed:
 Clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/<your-username>/Expense-Tracker-MERN-Stack.git
+git clone https://github.com/Kruthikmanubolu/Expense-Tracker-MERN-Stack.git
 cd Expense-Tracker-MERN-Stack
 ```
