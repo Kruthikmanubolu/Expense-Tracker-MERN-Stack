@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../api/api';
 import Particle from './Particle';
 import { Spinner } from 'react-bootstrap';
-import '../index.css'; // Adjust path as needed
+import '../index.css'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -20,7 +20,7 @@ const Login = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('username', data.username);
       setLoading(false);
-      navigate('/dashboard');
+      navigate('/otp-verification', { state: { email } });
     } catch (error) {
       setLoading(false);
       alert('Login failed: ' + (error.response?.data?.message || 'Unknown error'));

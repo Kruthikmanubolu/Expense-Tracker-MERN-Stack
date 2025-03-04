@@ -99,6 +99,19 @@
   z-index: 2;
 }
 
+.glass-card-otp {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 600px;
+  width: 100%;
+  padding: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
 .glass-card-dash {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
@@ -252,6 +265,12 @@
   text-align: center;
   color: #ffffff;
   opacity: 0.75;
+  margin-top: 1rem;
+}
+
+.footer-otp {
+  text-align: justify;
+  color: #ffffff;
   margin-top: 1rem;
 }
 
