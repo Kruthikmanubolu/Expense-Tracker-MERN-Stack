@@ -18,10 +18,10 @@ const Signup = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|oregonstate\.edu|outlook\.com)$/;
+  
     if (!username.trim()) newErrors.username = 'Username is required';
-    if (!emailRegex.test(email)) newErrors.email = 'Email must be a valid @gmail.com address';
+    if (!emailRegex.test(email)) newErrors.email = 'Email must be a valid @(gmail.com, oregonstate.edu, outlook.com) address';
     if (!password) {
       newErrors.password = 'Password is required';
     } else if (password.length < 8) {
@@ -38,32 +38,43 @@ const Signup = () => {
     } else if (password !== confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-
+  
+    // Only set the errors if any exist
+    console.log('Validation errors:', newErrors);
     setErrors(newErrors);
+    
+    // Return false if there are any errors
     return Object.keys(newErrors).length === 0;
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if (validateForm()) {
-      try {
-        const { data } = await signup({ username, email, password, confirmPassword });
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('username', data.username);
-        setLoading(false);
-        navigate('/login');
-      } catch (error) {
-        setLoading(false);
-        alert('Signup failed: ' + (error.response?.data?.message || 'Unknown error'));
-        if (error.response?.data?.message) {
-          setErrors({ backend: error.response.data.message });
-        }
-      }
-    } else {
+  
+    // Run form validation
+    const formValid = validateForm();
+    
+    if (!formValid) {
       setLoading(false);
+      return; // Stop execution if validation fails
+    }
+  
+    try {
+      const { data } = await signup({ username, email, password, confirmPassword });
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      setLoading(false);
+      navigate('/login');
+    } catch (error) {
+      setLoading(false);
+      alert('Signup failed: ' + (error.response?.data?.message || 'Unknown error'));
+      
+      if (error.response?.data?.message) {
+        setErrors((prevErrors) => ({ ...prevErrors, backend: error.response.data.message }));
+      }
     }
   };
+  
 
   return (
     <div className="page-container">
@@ -93,7 +104,7 @@ const Signup = () => {
                   placeholder="Enter your username"
                   required
                 />
-                {errors.username && <div className="invalid-feedback">{errors.username}</div>}
+                {errors.username && <div className='confirm-password-error' >{errors.username}</div>}
               </div>
               <div className="form-group">
                 <label htmlFor="email" className="form-label">Email</label>
@@ -107,10 +118,10 @@ const Signup = () => {
                   required
                   aria-describedby="emailHelp"
                 />
-                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
-                <div id="emailHelp" className="footer-text">
-                  Must be a @gmail.com address.
-                </div>
+                {errors.email && <div className='confirm-password-error' >{errors.email}</div>}
+                {/* <div id="emailHelp" className="footer-text">
+                  Must be a @gmail.com, @oregonstate.edu, @outlook.com address.
+                </div> */}
               </div>
               <div className="form-group">
                 <label htmlFor="password" className="form-label">Password</label>
@@ -120,10 +131,12 @@ const Signup = () => {
                     className={`fancy-input ${errors.password ? 'is-invalid' : ''}`}
                     id="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {setPassword(e.target.value); console.log('Password updated:', e.target.value);}
+                    }
                     placeholder="Enter your password"
                     required
                   />
+                  
                   <button
                     type="button"
                     className="toggle-password"
@@ -132,7 +145,7 @@ const Signup = () => {
                     <i className={showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'}></i>
                   </button>
                 </div>
-                {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+                {errors.password && <div className='confirm-password-error'>{errors.password}</div>}
               </div>
               <div className="form-group">
                 <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
@@ -154,7 +167,7 @@ const Signup = () => {
                     <i className={showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'}></i>
                   </button>
                 </div>
-                {errors.confirmPassword && <div className="invalid-feedback">{errors.confirmPassword}</div>}
+                {errors.confirmPassword && <div className='confirm-password-error' >{errors.confirmPassword}</div>}
                 {errors.backend && <div className="alert alert-danger mt-2">{errors.backend}</div>}
               </div>
               <button type="submit" className="fancy-button">

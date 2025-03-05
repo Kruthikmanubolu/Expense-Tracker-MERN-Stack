@@ -204,6 +204,7 @@
 }
 
 
+
 .input-wrapper {
   position: relative;
   display: flex;
@@ -233,6 +234,14 @@
 .toggle-password i {
   color: #ffffff;
 }
+
+.confirm-password-error {
+  color: red;
+  font-size: 0.875em;
+  margin-top: 0.25rem;
+  font-weight: bold;
+}
+
 
 
 .form-group {

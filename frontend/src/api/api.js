@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'https://expense-track-backend-9rzm.onrender.com/api' });
+const API = axios.create({ baseURL: 'http://localhost:5000/api' });
 
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');
@@ -18,3 +18,6 @@ export const deleteExpense = (id) => API.delete(`/expenses/${id}`);
 export const getIncomes = () => API.get('/incomes');
 export const addIncome = (data) => API.post('/incomes', data);
 export const verifyOtp = (data) => API.post('/auth/verify-otp', data);
+
+export const forgotPassword = (data) => API.post('/auth/forgot-password', data); // New
+export const resetPassword = (data) => API.post('/auth/reset-password', data);
