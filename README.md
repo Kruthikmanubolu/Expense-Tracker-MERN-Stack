@@ -124,8 +124,9 @@ Open http://localhost:3000 in your browser to see the app.
 
 ### Logging In
 
-- Click "Login" on the homepage or navigate to /layout/login.
+- Click "Login" on the homepage or navigate to /login.
 - Enter your email and password.
+- Forgot Password? No problem, click on forgot password and enter the email and verify the otp. CHANGE THE PASSWORD!!!!. Thats it
 - After successful email/password validation, you’ll receive an OTP via email. Verify it on the OTP verification page to access the dashboard.
 
 ### Dashboard
@@ -139,6 +140,8 @@ Open http://localhost:3000 in your browser to see the app.
 - Enable 2-Factor Authentication (2FA) for your Gmail account if not already enabled.
 - Generate an App Password in Google Account Settings > Security > App Passwords for "SpendSmart" (select "Mail" and "Other").
 - Use this 16-character App Password as EMAIL_PASS in your .env.
+  
+##### Note -  Can enter the original password of Gmail but not recommended due to security because the github source code will be public.
 
 ### Deployment
 
