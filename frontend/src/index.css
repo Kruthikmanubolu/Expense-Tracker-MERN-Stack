@@ -254,6 +254,11 @@
   color: #ffffff;
 }
 
+.form-label-login {
+  font-weight: bold;
+  color: #000000;
+}
+
 
 .form-text {
   color: #ffffff;

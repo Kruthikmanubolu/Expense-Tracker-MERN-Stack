@@ -5,7 +5,8 @@ import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import Home from './components/Home'; 
 import OtpVerification from './components/OtpVerification';
-
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   return token ? children : <Navigate to="/" />; 
@@ -20,6 +21,8 @@ const App = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/otp-verification" element={<OtpVerification />} /> {/* Add this route */}
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+<Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </Router>
   );

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../api/api';
 import Particle from './Particle';
 import { Spinner } from 'react-bootstrap';
-import '../index.css'; 
+import '../index.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -80,6 +80,11 @@ const Login = () => {
                     <i className={showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'}></i>
                   </button>
                 </div>
+              </div>
+              <div className="forgot-password-container">
+                <a href="/forgot-password" className="form-label">
+                  Forgot Password?
+                </a>
               </div>
               <button type="submit" className="fancy-button">
                 Login
