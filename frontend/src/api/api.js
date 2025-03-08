@@ -17,6 +17,9 @@ export const deleteExpense = (id) => API.delete(`/expenses/${id}`);
 
 export const getIncomes = () => API.get('/incomes');
 export const addIncome = (data) => API.post('/incomes', data);
+export const updateIncome = (id, data) => API.put(`/incomes/${id}`, data);
+export const deleteIncome = (id) => API.delete(`/incomes/${id}`);
+
 export const verifyOtp = (data) => API.post('/auth/verify-otp', data);
 
 export const forgotPassword = (data) => API.post('/auth/forgot-password', data);

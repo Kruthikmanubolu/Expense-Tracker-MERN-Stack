@@ -4,13 +4,18 @@ const IncomeForm = ({ onSubmit }) => {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
+  const [otherCategory, setOtherCategory] = useState(''); // State for custom category input
+
+  const categories = ['Salary', 'Freelance', 'Investments', 'Other']; // Example categories
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ description, amount: Number(amount), category });
+    const finalCategory = category === 'Other' ? otherCategory : category; // Use custom category if "Other" is selected
+    onSubmit({ description, amount: Number(amount), category: finalCategory });
     setDescription('');
     setAmount('');
     setCategory('');
+    setOtherCategory(''); // Reset custom category input
   };
 
   return (
@@ -39,15 +44,30 @@ const IncomeForm = ({ onSubmit }) => {
             />
           </div>
           <div className="col-md-3">
-            <input
-              type="text"
+            <select
               className="form-control"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="Category"
               required
-            />
+            >
+              <option value="">Select Category</option>
+              {categories.map((cat, index) => (
+                <option key={index} value={cat}>{cat}</option>
+              ))}
+            </select>
           </div>
+          {category === 'Other' && (
+            <div className="col-md-3">
+              <input
+                type="text"
+                className="form-control"
+                value={otherCategory}
+                onChange={(e) => setOtherCategory(e.target.value)}
+                placeholder="Enter custom category"
+                required
+              />
+            </div>
+          )}
           <div className="col-md-2">
             <button type="submit" className="btn btn-success w-100">Add</button>
           </div>
