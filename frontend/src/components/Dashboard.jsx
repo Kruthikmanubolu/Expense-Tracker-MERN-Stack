@@ -20,6 +20,8 @@ const Dashboard = () => {
   const [finance, setFinance] = useState(false);
   const [expenseCategories] = useState(['Food', 'Transport', 'Entertainment', 'Health', 'Bills']);
   const [incomeCategories] = useState(['Salary', 'Business', 'Freelance', 'Investments']);
+  const [isListening, setIsListening] = useState(false);
+
 
   useEffect(() => {
     fetchExpenses();
@@ -229,6 +231,54 @@ const Dashboard = () => {
       },
     },
   };
+
+  const handleVoiceInput = () => {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.start();
+  
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+  
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      const words = transcript.split(' ');
+  
+      if (words.length < 3) {
+        alert('Could not recognize the input correctly. Please say something like "expense 50 food" or "income 100 salary".');
+        return;
+      }
+  
+      const type = words[0];  // First word should indicate "income" or "expense"
+      const amount = parseFloat(words[1]);  // Second word is the amount
+      const category = words.slice(2).join(' '); // Rest of the words form the category
+  
+      if (!amount || isNaN(amount)) {
+        alert('Could not recognize a valid amount.');
+        return;
+      }
+  
+      if (type === 'expense') {
+        const expense = { description: 'Voice Expense', amount, category };
+        handleAddExpense(expense);
+      } else if (type === 'income') {
+        const income = { description: 'Voice Income', amount, category };
+        handleAddIncome(income);
+      } else {
+        alert('Please start with "income" or "expense".');
+      }
+    };
+  
+    recognition.onerror = (error) => {
+      console.error('Speech recognition error:', error);
+    };
+  
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+  };
+  
 
   return (
     <div className="page-container dashboard-container">
@@ -454,6 +504,11 @@ const Dashboard = () => {
             ) : (
               <p className="footer-text"></p>
             )}
+          </div>
+          <div>
+            <button onClick={handleVoiceInput} className="fancy-button voice-button">
+              {isListening ? 'Listening...' : 'Speak to Add'}
+            </button>
           </div>
         </div>
       </div>
